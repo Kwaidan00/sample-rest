@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from library.models import Author, Book
+from library.models import Author, Book, PersonalLibrary
 
 
 class AuthorSerializer(serializers.HyperlinkedModelSerializer):
@@ -17,4 +17,21 @@ class BookSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Book
-        fields = ('title', 'author')
+        fields = ('id', 'title', 'author')
+
+
+class PersonalLibrarySerializer(serializers.HyperlinkedModelSerializer):
+    books = serializers.HyperlinkedRelatedField(many=True, view_name='drf:book-detail',
+                                                queryset=Book.objects.all())
+
+    class Meta:
+        model = PersonalLibrary
+        fields = ('books',)
+
+    def create(self, validated_data):
+        books = validated_data.pop('books')
+        user = validated_data.pop('user')
+        library = PersonalLibrary.objects.get(user=user)
+        for book in books:
+            library.books.add(book)
+        return library

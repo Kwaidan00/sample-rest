@@ -12,8 +12,9 @@ class AuthorSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class BookSerializer(serializers.HyperlinkedModelSerializer):
-    author_url = serializers.HyperlinkedIdentityField(view_name="drf:author-detail")
+    author = serializers.HyperlinkedRelatedField(view_name="drf:author-detail", lookup_field='pk',
+                                                 queryset=Author.objects.all())
 
     class Meta:
         model = Book
-        fields = ('title', 'author_url')
+        fields = ('title', 'author')

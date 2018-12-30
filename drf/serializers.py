@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from rest_framework.generics import get_object_or_404
 
 from library.models import Author, Book, PersonalLibrary
 
@@ -21,17 +22,25 @@ class BookSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class PersonalLibrarySerializer(serializers.HyperlinkedModelSerializer):
-    books = serializers.HyperlinkedRelatedField(many=True, view_name='drf:book-detail',
-                                                queryset=Book.objects.all())
+    books_url = serializers.HyperlinkedIdentityField(view_name='drf:library-detail-books-list',
+                                                     lookup_field='user_id',
+                                                     lookup_url_kwarg='user_pk')
 
     class Meta:
         model = PersonalLibrary
-        fields = ('books',)
+        fields = ('user_id', 'books_url')
+
+
+class PersonalLibraryBookSerializer(BookSerializer):
+    id = serializers.IntegerField(read_only=False)
 
     def create(self, validated_data):
-        books = validated_data.pop('books')
         user = validated_data.pop('user')
+        book_pk = validated_data.pop('id')
+        book_title = validated_data.pop('title')
+        book_author = validated_data.pop('author')
+        book = get_object_or_404(Book, pk=book_pk)
         library = PersonalLibrary.objects.get(user=user)
-        for book in books:
-            library.books.add(book)
-        return library
+        library.books.add(book)
+        return book
+

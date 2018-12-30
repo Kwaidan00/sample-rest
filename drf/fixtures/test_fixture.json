@@ -1,0 +1,26 @@
+[
+{
+    "model": "library.author",
+    "pk": 1,
+    "fields": {
+        "first_name": "Robert",
+        "last_name": "Martin"
+    }
+},
+{
+    "model": "library.book",
+    "pk": 1,
+    "fields": {
+        "title": "Czysty Kod",
+        "author": 1
+    }
+},
+{
+    "model": "library.book",
+    "pk": 2,
+    "fields": {
+        "title": "Czysta architektura",
+        "author": 1
+    }
+}
+]

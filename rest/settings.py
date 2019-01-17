@@ -19,14 +19,24 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.1/howto/deployment/checklist/
 
+server_name = os.environ.get('REST_SERVER', 'local')
+if server_name == 'local':
+    DEBUG = True
+else:
+    DEBUG = False
+
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'syzhuv!tk&j@c5zcij5nom%0juo8bh1otrgyuhkbe$&k3eg^e2'
+if not DEBUG:
+    secret_file = os.path.join(os.path.dirname(BASE_DIR), 'rest_key.txt')
+    with open(secret_file) as file:
+        SECRET_KEY = file.read().strip()
+    ALLOWED_HOSTS = ['aleksanderspyra.pl', 'www.aleksanderspyra.pl']
+else:
+    SECRET_KEY = 'syzhuv!tk&j@c5zcij5nom%0juo8bh1otrgyuhkbe$&k3eg^e2'
+    ALLOWED_HOSTS = []
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-
-ALLOWED_HOSTS = []
-
+print('Server name: {}'.format(server_name))
 
 # Application definition
 
